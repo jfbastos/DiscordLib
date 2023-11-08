@@ -1,14 +1,17 @@
 package br.com.maximatech.discordlib
 
 import android.os.Bundle
+import android.util.JsonWriter
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import br.com.maximatech.discordlogger.DiscordLog
 import br.com.maximatech.discordlogger.model.DadosUsuario
+import br.com.maximatech.discordlogger.model.enums.Nivel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.net.SocketException
 
 class MainActivity : AppCompatActivity() {
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendTestMessages() = CoroutineScope(Dispatchers.IO).launch {
-        for(x in 1..5){
+        for(x in 1..6){
             delay(2000)
             mockLog(x)
         }
@@ -69,30 +72,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun mockLog(index: Int) {
         when (index) {
-            1 -> discordLog.logI(
-                    tag = "",
+            0 -> discordLog.log(
+                    nivelDoLog = Nivel.DEBUG,
                     title = "Checkout por raio",
                     mensagem ="Usuário com checkout por raio habilitado",
                     usuario = mockedUser(index),
                     callingClass = "TrackingHelper")
-            2 -> discordLog.logI(
-                    tag = "",
+            1 -> discordLog.log(
+                    nivelDoLog = Nivel.INFO,
                     title = "Checkout por raio",
                     mensagem ="Usuário com checkout por raio habilitado",
                     usuario = mockedUser(index),
                     callingClass = "TrackinHelper")
-            3 -> discordLog.logW(
-                    tag = "",
+            2 -> discordLog.log(
+                nivelDoLog = Nivel.WARNING,
                     title = "Disco cheio",
                     mensagem ="Disco do usuário está com 98% de uso",
                     usuario = mockedUser(index),
                     callingClass = "UtilDispositivo")
-            4 -> discordLog.logE(
-                    tag = "",
+            3 -> discordLog.log(
+                    nivelDoLog = Nivel.ERROR,
                     title = "Envio visita wrapper",
                     mensagem ="Não foi possível enviar o wrapper. \n\n ${SocketException("No such address").stackTraceToString()}",
                     usuario = mockedUser(index),
                     callingClass = "EnvioVisitaJob")
+            4 -> discordLog.log(
+                nivelDoLog = Nivel.DEBUG,
+                title = "Retorno wrapper",
+                mensagem ="JSON retorno Wrapper. \n\n {'this':'is a JSON'}",
+                usuario = mockedUser(index),
+                callingClass = "EnvioVisitaJob")
         }
     }
 }
